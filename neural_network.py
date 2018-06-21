@@ -26,7 +26,7 @@ class neural_network(object):
                 self.__update_mini_batch__(mini_batch, alpha)
 
             evaluate_info = '%d %d %d' %(iter_cnt, self.evaluate(test_data), len(test_data))
-            print evaluate_info
+            print(evaluate_info)
 
             iter_cnt += 1
 

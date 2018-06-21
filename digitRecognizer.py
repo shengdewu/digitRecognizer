@@ -1,4 +1,4 @@
-from files import  Files
+from load_data import  Files
 
 def digitRecognizer():
     path = 'data/train.csv'
