@@ -6,7 +6,7 @@ class neural_network(object):
             raise Exception("Invalid neuro network ")
             return
 
-        self.__weight__ = [np.random.randn(n2, n1) for n1, n2 in zip(size[0:2], size[1:])]
+        self.__weight__ = [np.random.randn(n2, n1) for n1, n2 in zip(size[0:-1], size[1:])]
         self.__bias__ = [np.random.randn(n, 1) for n in size[1:]]
         self.__layers__ = len(size)
 
