@@ -12,7 +12,7 @@ class load_data(object):
                 continue
             data_y = int(line[0])
             data_x = line[1:]
-            data_x = [int(i) for i in data_x]
+            data_x = [int(i)/255 for i in data_x]
             train_x.append(data_x)
             train_y.append(data_y)
             train_data = [(x, y) for x, y in zip(train_x, train_y)]
