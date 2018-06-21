@@ -10,7 +10,63 @@ class neural_network(object):
         self.__bias__ = [np.random.randn(n, 1) for n in size[1:]]
         self.__layers__ = len(size)
 
-    def backpropagation(self, y, x):
+    def sgd(self, train_data, test_data, epoch = 10, mini_batch_size = 30, alpha = 2):
+        '''
+        :param train_data: a list of tuple
+        :param epoch: The number of iterations
+        :param mini_batch_size: The size of the small batch data
+        :param alpha:Learning rate or step length
+        :return:
+        '''
+        iter_cnt = 0
+        while iter_cnt < epoch:
+            np.random.shuffle(train_data)
+            mini_batches = [train_data[n: n+mini_batch_size] for n in range(0, len(train_data), mini_batch_size)]
+            for mini_batch in mini_batches:
+                self.__update_mini_batch__(mini_batch, alpha)
+
+            evaluate_info = '%d %d %d' %(iter_cnt, self.evaluate(test_data), len(test_data))
+            print evaluate_info
+
+            iter_cnt += 1
+
+    def evaluate(self, test_data):
+        '''
+        :param test_data: a list of tuple
+        :return:
+        '''
+        test_reuslt = [(self.__feed_forward__(x), y) for x, y in test_data]
+        return sum(int(x==y) for x, y in test_reuslt)
+
+
+    def predict(self, predict_data):
+        '''
+        :param predict_data: a list of list or tuple
+        :return: label of predict_data
+        '''
+        label = []
+        for x in predict_data:
+            label.append(self.__feed_forward__(x))
+        return label
+
+    def __feed_forward__(self, x):
+        active = x
+        for w, b in zip(self.__weight__, self.__bias__):
+            z = np.dot(w, active) + b
+            active = self.__sigmod__(z)
+        return np.argmax(active)
+
+    def __update_mini_batch__(self, mini_batch, alpha):
+        sum_delta_b = [np.zeros(b.shape) for b in self.__bias__]
+        sum_delta_w = [np.zeros(w.shape) for w in self.__weight__]
+        for x, y in mini_batch:
+            delta_w, delta_b = self.__back_propagation__(y, x)
+            sum_delta_b = [sb + b for sb, b in zip(sum_delta_b, delta_b)]
+            sum_delta_w = [sw + w for sw, w in zip(sum_delta_w, delta_w)]
+        self.__weight__ = [w - alpha * sw / len(mini_batch) for w, sw in zip(self.__weight__ ,sum_delta_w)]
+        self.__bias__ = [b - alpha * sb / len(mini_batch) for b, sb in zip(self.__bias__ ,sum_delta_b)]
+
+    def __back_propagation__(self, y, x):
         delta_b = [np.zeros(b.shape) for b in self.__bias__]
         delta_w = [np.zeros(w.shape) for w in self.__weight__]
         #feedforward
@@ -20,28 +76,28 @@ class neural_network(object):
         for w, b in zip(self.__weight__, self.__bias__):
             z = np.dot(w, active) + b
             zs.append(z)
-            active = self.sigmod(z)
+            active = self.__sigmod__(z)
             actives.append(active)
 
-        delta = self.cost_derivative(y, actives[-1]) * self.sigmod_derivative(zs[-1])
+        delta = self.__cost_derivative__(y, actives[-1]) * self.__sigmod_derivative__(zs[-1])
         delta_w[-1] = np.dot(delta, actives[-2].transpose())
         delta_b[-1] = delta
         #backforward
         for lay in range(2, self.__layers__):
-            delta = np.dot(self.__weight__[-lay + 1].transpose(), delta) * self.sigmod_derivative(zs[-lay])
+            delta = np.dot(self.__weight__[-lay + 1].transpose(), delta) * self.__sigmod_derivative__(zs[-lay])
             delta_w[-lay] = np.dot(delta, actives[-lay-1].transpose())
             delta_b[-lay] = delta
 
         return delta_w, delta_b
 
-    def cost_derivative(self, y, o):
-        return y - o
+    def __cost_derivative__(self, y, o):
+        return o - y
 
-    def sigmod(self, z):
+    def __sigmod__(self, z):
         return 1.0 / (1.0 + np.exp(-z))
 
-    def sigmod_derivative(self, z):
-        return self.sigmod(z) * (1 - self.sigmod(z))
+    def __sigmod_derivative__(self, z):
+        return self.__sigmod__(z) * (1 - self.__sigmod__(z))
 
 
 def test():
