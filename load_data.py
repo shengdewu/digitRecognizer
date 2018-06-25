@@ -1,13 +1,14 @@
 import os
 import csv
 import numpy as np
+import random
 
 class load_data(object):
 
     def load_train_data(self, path):
         file_path = os.path.abspath(path)
         fdata = csv.reader(open(file_path, 'r'))
-        train_data = []
+        data = []
         for line in fdata:
             if 'label' == line[0]:
                 continue
@@ -15,9 +16,19 @@ class load_data(object):
             data_x = line[1:]
             data_x = [int(i)/255 for i in data_x]
             data_x = np.array(data_x).reshape(len(data_x), 1)
-            train_data.append((data_x, data_y))
-        np.random.shuffle(train_data)
-        return train_data
+            data.append((data_x, data_y))
+
+        np.random.shuffle(data)
+        test_data = data[: int(len(data) * 0.3)]
+        data = data[int(len(data) * 0.3):]
+        training_data = []
+        for x, y in data:
+            label = np.zeros((10, 1))
+            label[y] = 1
+            training_data.append((x, label))
+
+
+        return training_data, test_data
 
     def laod_test_data(self, path):
         fdata = csv.reader(open(path, 'r'))

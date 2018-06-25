@@ -25,18 +25,21 @@ class neural_network(object):
             for mini_batch in mini_batches:
                 self.__update_mini_batch__(mini_batch, alpha)
 
-            evaluate_info = '%d %d %d' %(iter_cnt, self.evaluate(test_data), len(test_data))
-            print(evaluate_info)
-
+            self.evaluate(test_data, iter_cnt)
             iter_cnt += 1
 
-    def evaluate(self, test_data):
+    def evaluate(self, test_data, iter_cnt):
         '''
         :param test_data: a list of tuple
+        :param iter_cnt: iter cnt
         :return:
         '''
+        len_data = len(test_data)
         test_reuslt = [(self.__feed_forward__(x), y) for x, y in test_data]
-        return sum(int(x==y) for x, y in test_reuslt)
+        correct_cnt = sum(int(x==y) for x, y in test_reuslt)
+        print('%d %d %d %f' % (iter_cnt, correct_cnt, len_data, float(correct_cnt)/len_data))
+
+        return
 
 
     def predict(self, predict_data):
