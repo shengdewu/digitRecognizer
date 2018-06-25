@@ -1,21 +1,22 @@
 import os
 import csv
+import numpy as np
 
 class load_data(object):
 
     def load_train_data(self, path):
-        fdata = csv.reader(open(path, 'r'))
-        train_x =[]
-        train_y = []
+        file_path = os.path.abspath(path)
+        fdata = csv.reader(open(file_path, 'r'))
+        train_data = []
         for line in fdata:
             if 'label' == line[0]:
                 continue
             data_y = int(line[0])
             data_x = line[1:]
             data_x = [int(i)/255 for i in data_x]
-            train_x.append(data_x)
-            train_y.append(data_y)
-            train_data = [(x, y) for x, y in zip(train_x, train_y)]
+            data_x = np.array(data_x).reshape(len(data_x), 1)
+            train_data.append((data_x, data_y))
+        np.random.shuffle(train_data)
         return train_data
 
     def laod_test_data(self, path):

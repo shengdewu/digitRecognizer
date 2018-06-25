@@ -1,11 +1,9 @@
 import neural_network
 import load_data
-import numpy as np
 
 if __name__ == '__main__':
     laod = load_data.load_data()
     data = laod.load_train_data('./data/train.csv')
-    np.random.shuffle(data)
     test_data = data[: int(len(data)/0.1)]
     training_data = data[int(len(data)/0.1):]
     net = neural_network.neural_network([784, 30, 40, 10])
