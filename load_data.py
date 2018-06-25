@@ -31,13 +31,23 @@ class load_data(object):
         return training_data, test_data
 
     def laod_test_data(self, path):
-        fdata = csv.reader(open(path, 'r'))
+        file_path = os.path.abspath(path)
+        fdata = csv.reader(open(file_path, 'r'))
         test_data =[]
         for line in fdata:
             if 'pixel0' == line[0]:
                 continue
-            data = [int(i) for i in line]
+            data = [int(i)/255 for i in line]
+            data = np.array(data).reshape(len(data), 1)
             test_data.append(data)
         return test_data
+
+    def save_predict(self, label, path):
+        file_path = os.path.abspath(path)
+        fdata = csv.writer(open(file_path, 'w'))
+        id = 0
+        for y in label:
+            fdata.writerow([id, y])
+            id +=1
 
 
