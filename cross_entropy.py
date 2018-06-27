@@ -1,7 +1,7 @@
 import numpy as np
 import neurons_network_base
 
-class cross_entropy(neurons_network_base):
+class cross_entropy(neurons_network_base.neurons_network_base):
 
     def __init__(self, size):
         '''
@@ -11,7 +11,6 @@ class cross_entropy(neurons_network_base):
         return
 
     def back_pro(self, x, y):
-        print('cross entropy..\n')
         delt_bias = [np.zeros(b.shape) for b in self.bias]
         delt_wight = [np.zeros(w.shape) for w in self.wight]
 
