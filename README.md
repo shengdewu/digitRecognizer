@@ -1,6 +1,8 @@
 # digitRecognizer
 手写数字识别
 
+采用神经网络实现 kaggle 的竞赛题
+
 Data Description
 
 The data files train.csv and test.csv contain gray-scale images of hand-drawn digits, from zero through nine.
